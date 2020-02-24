@@ -2,6 +2,7 @@ package com.board.re.controller;
 
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.board.re.dao.BoardDAO;
 import com.board.re.dao.PageMaker;
 import com.board.re.vo.BoardVO;
 import com.board.re.vo.Criteria;
+import com.board.re.vo.ReplyVO;
 
 @Controller
 @RequestMapping("/board/**")
@@ -52,5 +54,30 @@ public class BoardController {
 		BoardVO result = dao.readBoard(vo, session);
 		model.addAttribute("board", result);
 		return "board/readBoard";
+	}
+	
+	@GetMapping("/updateBoardForm")
+	public String updateBoardForm (BoardVO vo, HttpSession session, Model model) {
+		BoardVO result = dao.readBoard(vo, session);
+		model.addAttribute("board", result);
+		return "board/updateBoardForm";
+	}
+	@PostMapping("/updateBoard")
+	public String updateBoard(BoardVO vo, HttpSession session, RedirectAttributes rttr, MultipartFile uploadFile) {
+		boolean result = false;
+		if(dao.updateBoard(vo, session, uploadFile) > 0) result = true;
+		rttr.addFlashAttribute("updateResult", result);
+		return "redirect:/board/readBoard?boardnum="+vo.getBoardnum();
+	}
+	@GetMapping("/deleteBoard")
+	public String deleteBoard(HttpSession session, BoardVO vo, RedirectAttributes rttr) {
+		boolean result = false;
+		if(dao.deleteBoard(vo, session) > 0) result = true;
+		rttr.addFlashAttribute("deleteResult", result);
+		return "redirect:/board/boardList";
+	}
+	@GetMapping("/download")
+	public void download(BoardVO vo, HttpServletResponse response, HttpSession session) {
+		dao.download(vo, response, session);
 	}
 }

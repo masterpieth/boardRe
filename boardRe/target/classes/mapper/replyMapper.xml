@@ -2,4 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.board.re.dao.ReplyMapper">
+	<insert id="writeReply" parameterType="replyVO">
+		insert into reply_tbl
+		values(
+		reply_tbl_seq.nextval,
+		#{boardnum},
+		#{userid},
+		#{replytext},
+		sysdate
+		)
+	</insert>
+	<delete id="deleteReply" parameterType="replyVO">
+		delete from reply_tbl
+		where boardnum = #{boardnum} and replynum = #{replynum}
+	</delete>
 </mapper>

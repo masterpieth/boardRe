@@ -12,4 +12,6 @@ public interface BoardMapper {
 	public int totalCount();
 	public BoardVO readBoard(BoardVO vo);
 	public void updateHit(int boardnum);
+	public int deleteBoard(BoardVO vo);
+	public int updateBoard(BoardVO vo);
 }

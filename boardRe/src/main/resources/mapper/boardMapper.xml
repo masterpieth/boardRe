@@ -32,7 +32,8 @@
 		)
 	</insert>
 
-	<select id="boardList" parameterType="criteria" resultType="boardVO">
+	<select id="boardList" parameterType="criteria"
+		resultType="boardVO">
 		select
 		boardnum,
 		userid,
@@ -41,33 +42,57 @@
 		inputdate,
 		hit
 		from (
-			select
-			boardnum,
-			userid,
-			title,
-			content,
-			inputdate,
-			hit,
-			row_number() over(order by boardnum) as rNum
-			from board_tbl
+		select
+		boardnum,
+		userid,
+		title,
+		content,
+		inputdate,
+		hit,
+		row_number()
+		over(order by boardnum) as rNum
+		from board_tbl
 		) p_board
-		where rNum between #{rowStart} and #{rowEnd}
-		order by boardnum desc
+		where rNum
+		between #{rowStart} and #{rowEnd}
+		order
+		by boardnum desc
 	</select>
 
 	<select id="totalCount" resultType="int">
 		select count(*) from
 		board_tbl
 	</select>
-	<select id="readBoard" parameterType="boardVO" resultType="boardVO">
+	<select id="readBoard" parameterType="boardVO"
+		resultType="boardVO">
 		select * from board_tbl
-		where 
+		where
 		boardnum = #{boardnum} and
 		userid = #{userid}
 	</select>
 	<update id="updateHit" parameterType="int">
-	update board_tbl
-	set hit = hit+1
-	where boardnum = #{boardnum}
+		update board_tbl
+		set hit =
+		hit+1
+		where boardnum = #{boardnum}
+	</update>
+
+	<delete id="deleteBoard" parameterType="boardVO">
+		delete from board_tbl
+		where userid=#{userid}
+		and boardnum = #{boardnum}
+	</delete>
+	<update id="updateBoard" parameterType="boardVO">
+		update board_tbl
+		set
+		title = #{title},
+		content = #{content}
+		<choose>
+			<when test="originalFileName != null and savedFileName != null">
+			,originalFileName = #{originalFileName}
+			,savedFileName = #{savedFileName}
+			</when>
+		</choose>
+		where userid = #{userid} and boardnum = #{boardnum}
 	</update>
 </mapper>
